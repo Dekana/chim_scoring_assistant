@@ -1,0 +1,10 @@
+{
+	"url": "http://0.0.0.0:1234/v1/chat/completions",
+	"model": "baezel-8b-linear",
+	"temperature": 1.1,
+	"top_p": 0.97,
+	"min_p": 0.03,
+	"repetition_penalty": 1.04,
+	"max_tokens": 512,
+	"response_format_type": "json_schema"
+}

@@ -1,0 +1,240 @@
+<!doctype html>
+<html data-bs-theme="dark">
+  <head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<meta
+	  http-equiv="Content-Security-Policy"
+	  content="default-src 'self'; img-src 'self' data:"
+	/>
+	<meta
+	  http-equiv="X-Content-Security-Policy"
+	  content="default-src 'self'; script-src 'self'"
+	/>
+
+	<link href="./css/bootstrap.min.css" rel="stylesheet">
+
+	<title>CHIM LLM Scoring Assistant</title>
+  </head>
+  <body class="m-2">
+	<script src="./dist/bootstrap.bundle.min.js"></script>
+
+	<ul class="nav nav-tabs" id="navTab" role="tablist">
+		<li class="nav-item" role="presentation">
+			<button class="nav-link" id="instructions-tab" data-bs-toggle="tab" data-bs-target="#instructions" type="button" role="tab" aria-controls="instructions" aria-selected="true">Instructions</button>
+		</li>
+		<li class="nav-item" role="presentation">
+			<button class="nav-link active" id="generate-tab" data-bs-toggle="tab" data-bs-target="#generate" type="button" role="tab" aria-controls="generate" aria-selected="true">Generate Responses</button>
+		</li>
+		<li class="nav-item" role="presentation">
+			<button class="nav-link" id="score-tab" data-bs-toggle="tab" data-bs-target="#score" type="button" role="tab" aria-controls="score" aria-selected="false">Generate Scores</button>
+		</li>
+		<li class="nav-item" role="presentation">
+			<button class="nav-link" id="results-tab" data-bs-toggle="tab" data-bs-target="#results" type="button" role="tab" aria-controls="results" aria-selected="false">Results</button>
+		</li>
+	</ul>
+	<div class="tab-content" id="navTabContent">
+		<!-- Instructions tab -->
+		<div class="tab-pane fade" id="instructions" role="tabpanel" aria-labelledby="instructions-tab">
+			<div class="container-fluid">
+				<div class="mb-2">
+					<h2>CHIM LLM Scoring Assistant</h2>
+					<p>This tool may be used to evaluate the responses that AI models give in the CHIM Skyrim mod.<br />
+					Use a list of prompts, exported from CHIM, to create a set of responses from a LLM.<br />
+					Then use a different LLM to assign scores to model that gave the responses.</p>
+					<p>Try to eliminate variables in the comparisons by using the same set of prompts and the same LLM for scoring in all evaluations.</p>
+					<h4>Instructions</h4>
+				</div>
+				<ol class="list-group mb-2">
+					<li class="list-group-item">Obtain a csv file of prompts from the CHIM discord server, or generate your own file.<br />
+						These can be exported from the CHIM context log by visiting:<br />
+						<pre><code>\\wsl.localhost\DwemerAI4Skyrim3\var\www\html\HerikaServer\debug\convert_log_to_csv.php</code></pre>
+						The resulting csv file will be created in <pre><code>\\wsl.localhost\DwemerAI4Skyrim3\var\www\html\HerikaServer\log\</code></pre>
+						Copy the csv file to this tool's folder and rename it "prompts.csv"
+					</li>
+					<li class="list-group-item">In the Generate Responses tab, select a prompts csv file to load. (If a "prompts.csv" file exists it will automatically be loaded)<br />
+						Enter the LLM settings of the model you want to be evaluated and then Generate Responses.</li>
+					<li class="list-group-item">In the Generate Scores tab, select a responses csv file to load. (If responses have been generated in the previous step, they will automatically be loaded)<br />
+						Enter the LLM settings of the model you want to do the evaluating and then Generate Scores.</li>
+					<li class="list-group-item">View the average scores in the Results tab.</li>
+				</ol>
+			</div>
+		</div>
+		
+		<!-- Generate Responses tab -->
+		<div class="tab-pane fade show active" id="generate" role="tabpanel" aria-labelledby="generate-tab">
+			<div class="container-fluid mt-3">
+				<div class="input-group mb-2">
+					<label class="input-group-text" for="file-upload-prompts">Prompts</label>
+					<input type="file" class="form-control" id="file-upload-prompts">
+				</div>
+				<div id="upload-prompts-result"></div>
+				
+				<div class="input-group mb-2">
+					<span class="input-group-text">URL</span>
+					<input type="text" class="form-control" id="input-response-url">
+				</div>
+				<div class="input-group mb-2">
+					<span class="input-group-text">API Key</span>
+					<input type="password" class="form-control" id="input-response-api-key">
+				</div>
+		
+				<div class="row">
+					<div class="col-md-6">
+						<div class="input-group mb-2">
+							<span class="input-group-text">Model</span>
+							<input type="text" class="form-control" id="input-response-model">
+						</div>
+						<div class="input-group mb-2">
+							<span class="input-group-text">Temperature</span>
+							<input type="number" class="form-control" id="input-response-temperature" step="0.1">
+						</div>
+						<div class="input-group mb-2">
+							<span class="input-group-text">Top P</span>
+							<input type="number" class="form-control" id="input-response-top-p" step="0.1">
+						</div>
+						<div class="input-group mb-2">
+							<span class="input-group-text">Min P</span>
+							<input type="number" class="form-control" id="input-response-min-p" step="0.1">
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="input-group mb-2">
+							<span class="input-group-text">Provider</span>
+							<input type="text" class="form-control" id="input-response-provider">
+						</div>
+						<div class="input-group mb-2">
+							<span class="input-group-text">Repetition Penalty</span>
+							<input type="number" class="form-control" id="input-response-repetition-penalty" step="0.1">
+						</div>
+						<div class="input-group mb-2">
+							<input class="btn-check" type="radio" name="response-max-tokens" id="checkbox-response-max-tokens" value="max_tokens" checked>
+							<label class="btn btn-outline-secondary" for="checkbox-response-max-tokens">Max Tokens</label>
+
+							<input class="btn-check" type="radio" name="response-max-tokens" id="checkbox-response-max-completion-tokens" value="max_completion_tokens">
+							<label class="btn btn-outline-secondary" for="checkbox-response-max-completion-tokens">Max Completion Tokens</label>
+							<input type="number" class="form-control" id="input-response-max-tokens">
+						</div>
+						<div class="input-group mb-2">
+							<span class="input-group-text">Response Format</span>
+							<input class="btn-check" type="radio" name="response-response-format" id="input-response-response-format-none" value="none" checked>
+							<label class="btn btn-outline-secondary" for="input-response-response-format-none">None</label>
+
+							<input class="btn-check" type="radio" name="response-response-format" id="input-response-response-format-json-object" value="json_object">
+							<label class="btn btn-outline-secondary" for="input-response-response-format-json-object">JSON Object</label>
+
+							<input class="btn-check" type="radio" name="response-response-format" id="input-response-response-format-json-schema" value="json_schema">
+							<label class="btn btn-outline-secondary" for="input-response-response-format-json-schema">JSON Schema</label>
+						</div>
+					</div>
+				</div>
+				<div class="d-grid">
+					<button type="button" class="btn btn-primary btn-block mb-2" id="btn-generate-responses" disabled>
+						<span id="response-button-spinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+						<span id="response-button-text">Generate Responses</span></button>
+					<div id="generate-responses-result"></div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Score Responses tab -->
+		<div class="tab-pane fade" id="score" role="tabpanel" aria-labelledby="score-tab">
+			<div class="container-fluid mt-3">
+				<div class="input-group mb-2">
+					<span class="input-group-text">Responses</span>
+					<input type="file" class="form-control" id="file-upload-responses">
+				</div>
+				<div id="upload-responses-result">
+					<div class="alert alert-info show">
+						First generate the responses to be scored, or select a CSV file containing the responses.
+					</div>
+				</div>
+
+				<div class="input-group mb-2">
+					<span class="input-group-text">URL</span>
+					<input type="text" class="form-control" id="input-score-url">
+				</div>
+				<div class="input-group mb-2">
+					<span class="input-group-text">API Key</span>
+					<input type="password" class="form-control" id="input-score-api-key">
+				</div>
+		
+				<div class="row">
+					<div class="col-md-6">
+						<div class="input-group mb-2">
+							<span class="input-group-text">Model</span>
+							<input type="text" class="form-control" id="input-score-model">
+						</div>
+						<div class="input-group mb-2">
+							<span class="input-group-text">Temperature</span>
+							<input type="number" class="form-control" id="input-score-temperature" step="0.1">
+						</div>
+						<div class="input-group mb-2">
+							<span class="input-group-text">Top P</span>
+							<input type="number" class="form-control" id="input-score-top-p" step="0.1">
+						</div>
+						<div class="input-group mb-2">
+							<span class="input-group-text">Min P</span>
+							<input type="number" class="form-control" id="input-score-min-p" step="0.1">
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="input-group mb-2">
+							<span class="input-group-text">Provider</span>
+							<input type="text" class="form-control" id="input-score-provider">
+						</div>
+						<div class="input-group mb-2">
+							<span class="input-group-text">Repetition Penalty</span>
+							<input type="number" class="form-control" id="input-score-repetition-penalty" step="0.1">
+						</div>
+						<div class="input-group mb-2">
+							<input class="btn-check" type="radio" name="score-max-tokens" id="checkbox-score-max-tokens" value="max_tokens" checked>
+							<label class="btn btn-outline-secondary" for="checkbox-score-max-tokens">Max Tokens</label>
+
+							<input class="btn-check" type="radio" name="score-max-tokens" id="checkbox-score-max-completion-tokens" value="max_completion_tokens">
+							<label class="btn btn-outline-secondary" for="checkbox-score-max-completion-tokens">Max Completion Tokens</label>
+							<input type="number" class="form-control" id="input-score-max-tokens">
+						</div>
+						<div class="input-group mb-2">
+							<span class="input-group-text">Response Format</span>
+							<input class="btn-check" type="radio" name="score-response-format" id="input-score-response-format-none" value="none" checked>
+							<label class="btn btn-outline-secondary" for="input-score-response-format-none">None</label>
+
+							<input class="btn-check" type="radio" name="score-response-format" id="input-score-response-format-json-object" value="json_object">
+							<label class="btn btn-outline-secondary" for="input-score-response-format-json-object">JSON Object</label>
+
+							<input class="btn-check" type="radio" name="score-response-format" id="input-score-response-format-json-schema" value="json_schema">
+							<label class="btn btn-outline-secondary" for="input-score-response-format-json-schema">JSON Schema</label>
+						</div>
+					</div>
+				</div>
+				<div class="d-grid">
+					<button type="button" class="btn btn-primary btn-block mb-2" id="btn-generate-scores" disabled>
+						<span id="score-button-spinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+						<span id="score-button-text">Generate Scores</span></button>
+					<div id="generate-scores-result"></div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Score Responses tab -->
+		<div class="tab-pane fade" id="results" role="tabpanel" aria-labelledby="results-tab">
+			<div class="container-fluid mt-3">
+				<div class="form-check">
+					<input class="form-check-input" type="checkbox" value="" id="toggle-settings-columns">
+					<label class="form-check-label" for="toggle-settings-columns">
+						Show LLM settings columns
+					</label>
+				</div>
+				<div id="results-table-container"></div>
+			</div>
+		</div>
+	</div>
+		  
+
+	<!-- You can also require other files to run in this process -->
+	<script src="./dist/papaparse.min.js"></script>
+	<script src="./dist/index.js"></script>
+  </body>
+</html>

@@ -1,0 +1,34 @@
+Ignore previous instructions. I am evaluating an LLM's response to a player's prompt in a roleplaying game set in Skyrim. The goal is to assess how effectively the LLM embodies a non-player character (NPC).
+In response to the previous messages, the LLM gave the following response:
+
+# LLM Response START #
+{response}
+# LLM Response END #
+
+Instructions:
+
+Please provide scores for the following criteria on a scale of 1 to 5 (with 5 being the highest). Provide a single, concise explanation justifying your overall scores.
+
+*   **Responsiveness (1-5):** How well does the LLM's response directly address the player's prompt? Does it answer questions, react to actions, and logically flow as a response to the prompt? A response that ignores the prompt entirely should receive a 1. A response that fully and appropriately addresses the prompt should receive a 5.
+
+*   **Roleplaying (1-5):** How well does the LLM's response maintain the established personality, motivations, and background of the NPC as described in the player's prompt? Consider dialogue style, behavior, and reactions. A response completely out of character should receive a 1. A response perfectly consistent with the established character should receive a 5.
+
+*   **Quality (1-5):** Assess the overall quality of the LLM's response. Consider factors such as:
+		* Funniness: Was the response humorous and engaging?
+		* Wit: Did the response demonstrate cleverness and wit?
+		* Depth: Did the response offer insightful or meaningful observations?
+		* Originality: Was the response unique and unexpected?
+		* Appropriateness: Was the tone and content of the response suitable for the character and the given situation?
+
+*   **Action Appropriateness (1-5):** Does the response include exactly one action that is logical and justified by the situation? Was it the most suitable of the available actions listed in the prompt? Consider the context of the player's prompt and the NPC's personality. A completely inappropriate or illogical action should receive a 1. A perfectly appropriate action that was the most suitable of those available should receive a 5.
+
+Example JSON Output Format:
+
+```json
+{
+  "explanation": "The response directly answered the player's request and was reasonably in-character. Lydia called the player her Thane, which matches her speech pattern given in the prompt. The response was very short and lacked depth, which somewhat matches Lydia's stoic personality but could be made more engaging. The Talk action was used even though the character indicated they would be attacking a monster. The Attack action would have been more suitable.",
+  "responsiveness": 5,
+  "roleplaying": 4,
+  "quality": 3,
+  "action_appropriateness": 3
+}
