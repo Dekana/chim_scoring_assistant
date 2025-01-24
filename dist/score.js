@@ -278,6 +278,7 @@ async function generateScores(settings, csvData, sender) {
         const csvString = [
             utils.getTimestampString(),
             modelDetails.model,
+            modelDetails.provider,
             modelDetails.url,
             modelDetails.temperature,
             modelDetails.top_p,
@@ -331,6 +332,7 @@ function writeAggregateScoreFile() {
 function writeScoreFile(modelName) {
     const headersArr = [
         "model",
+        "provider",
         "url",
         "temperature",
         "top_p",
