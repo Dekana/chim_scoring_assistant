@@ -36,6 +36,12 @@ The application makes some manual adjustments to the scores:
 * The AI judge's the suitability of the selected action, but the application overrides the score with a 1 if it's an unrecognized action.
 * The target score is calculated without AI input. If the selected action requires a target (like "Attack") but has no target specified, the target score is set to 1. Slightly incorrect targets get a 4, while correctly set targets get a 5.
 
+## AI Service-Specific Settings
+
+*   **OpenAI:** When using OpenAI models, use `max_completion_tokens` instead of `max_tokens`. Leave the `min_p` field blank, as it is not supported by the OpenAI API and will cause errors.
+*   **OpenRouter:** When selecting specific Providers on OpenRouter, check the specific provider's documentation on OpenRouter for each model. Not all fields are universally supported across all providers. For example, when using the Fireworks AI provider through OpenRouter, the `json_schema` parameter is usable, but the `min_p` parameter must be left blank.
+*   **LM Studio (Local):** When using a locally running LM Studio instance, a model name is still required in the application. This name is used for organizing and saving results in the correct folders within the application, even though LM Studio itself doesn't strictly require a model name in the API request. The API key field can be left blank when using a local LM Studio instance.
+
 ## Known Issues / TODO
 
 * The `scorePrompt.txt` file may need some refinement.
