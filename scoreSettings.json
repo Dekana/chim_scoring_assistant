@@ -1,8 +1,10 @@
 {
-	"url": "https://api.openai.com/v1/chat/completions",
-	"model": "gpt-4o",
+	"provider_order": "Fireworks",
+	"url": "https://openrouter.ai/api/v1/chat/completions",
+	"model": "meta-llama/llama-3.3-70b-instruct",
 	"temperature": 1.1,
 	"top_p": 0.97,
-	"max_completion_tokens": 512,
+	"repetition_penalty": 1.04,
+	"max_tokens": 512,
 	"response_format_type": "json_schema"
 }
