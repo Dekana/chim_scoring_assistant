@@ -296,10 +296,8 @@ async function generateScores(settings: utils.Settings, csvData: string, sender:
 
 	// Calculate average scores
 	if (modelDetails && aggregateScores.scored_response_count > 0) {
-
-		const dt = new Date();
 		const csvString = [
-			dt.toISOString(),
+			utils.getTimestampString(),
 			modelDetails.model,
 			modelDetails.url,
 			modelDetails.temperature,

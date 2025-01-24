@@ -3,7 +3,7 @@ export interface IElectronAPI {
 	getPrompts: () => Promise<string>,
 	getResponseSettings: () => Promise<string>,
 	getScoreSettings: () => Promise<string>,
-	generateResponses: (settings: string, csvData: string) => Promise<string>,
+	generateResponses: (settings: string, csvBuffer: ArrayBuffer, csvData: string) => Promise<string>,
 	generateScores: (settings: string, csvData: string) => Promise<string>,
 	incrementGenerateResponses: (callback: (processed: number, skipped: number, total: number) => void) => Promise<void>,
 	incrementGenerateScores: (callback: (processed: number, skipped: number, total: number) => void) => Promise<void>,

@@ -32,10 +32,12 @@ const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
 const generate_1 = __importDefault(require("./generate"));
 const score_1 = __importDefault(require("./score"));
-async function getCSVData(csvPath, quoteChar) {
-    if (fs.existsSync(csvPath)) {
+const isDev = !electron_1.app.isPackaged;
+async function getCSVData(fileName, quoteChar) {
+    const filePath = isDev ? path.join(process.cwd(), fileName) : path.join(process.cwd(), "resources", "app", fileName);
+    if (fs.existsSync(filePath)) {
         try {
-            const csvObj = Papa.parse(fs.readFileSync(csvPath).toString(), { header: true, quoteChar: quoteChar, skipEmptyLines: true });
+            const csvObj = Papa.parse(fs.readFileSync(filePath).toString(), { header: true, quoteChar: quoteChar, skipEmptyLines: true });
             if (csvObj && csvObj.data) {
                 return JSON.stringify(csvObj.data);
             }
@@ -46,10 +48,11 @@ async function getCSVData(csvPath, quoteChar) {
     }
     return "";
 }
-async function getJSONData(jsonPath) {
-    if (fs.existsSync(jsonPath)) {
+async function getJSONData(fileName) {
+    const filePath = isDev ? path.join(process.cwd(), fileName) : path.join(process.cwd(), "resources", "app", fileName);
+    if (fs.existsSync(filePath)) {
         try {
-            const settingsObj = JSON.parse(fs.readFileSync(jsonPath).toString());
+            const settingsObj = JSON.parse(fs.readFileSync(filePath).toString());
             if (settingsObj) {
                 return JSON.stringify(settingsObj);
             }
@@ -60,8 +63,12 @@ async function getJSONData(jsonPath) {
     }
     return "";
 }
-function saveJSONData(jsonPath, settings) {
-    fs.writeFileSync(path.join(__dirname, "..", jsonPath), settings);
+function saveCSVData(fileName, csvBuffer) {
+    const filePath = path.join(__dirname, "..", fileName);
+    fs.writeFileSync(filePath, Buffer.from(csvBuffer));
+}
+function saveJSONData(fileName, settings) {
+    fs.writeFileSync(path.join(__dirname, "..", fileName), settings);
 }
 function createWindow() {
     // Create the browser window.
@@ -88,9 +95,10 @@ electron_1.app.whenReady().then(() => {
     electron_1.ipcMain.handle('getJSONData', async (_event, jsonPath) => {
         return await getJSONData(jsonPath);
     });
-    electron_1.ipcMain.handle('generateResponses', async (event, settingsPath, settings, csvData) => {
+    electron_1.ipcMain.handle('generateResponses', async (event, settingsPath, settings, csvFileName, csvBuffer, csvData) => {
         try {
             saveJSONData(settingsPath, settings);
+            saveCSVData(csvFileName, csvBuffer);
             const responses = await (0, generate_1.default)(settings, csvData, event.sender);
             return JSON.stringify({ status: "ok", responses: responses });
         }

@@ -5,10 +5,13 @@ import * as path from "path";
 import generateResponses from "./generate";
 import generateScores from "./score";
 
-async function getCSVData (csvPath: string, quoteChar: string) {
-	if (fs.existsSync(csvPath)) {
+const isDev = !app.isPackaged;
+
+async function getCSVData (fileName: string, quoteChar: string) {
+	const filePath = isDev ? path.join(process.cwd(), fileName) : path.join(process.cwd(), "resources", "app", fileName);
+	if (fs.existsSync(filePath)) {
 		try {
-			const csvObj = Papa.parse(fs.readFileSync(csvPath).toString(), {header: true, quoteChar: quoteChar, skipEmptyLines: true});
+			const csvObj = Papa.parse(fs.readFileSync(filePath).toString(), {header: true, quoteChar: quoteChar, skipEmptyLines: true});
 			if (csvObj && csvObj.data) {
 				return JSON.stringify(csvObj.data);
 			}
@@ -19,10 +22,11 @@ async function getCSVData (csvPath: string, quoteChar: string) {
 	return "";
 }
 
-async function getJSONData (jsonPath: string) {
-	if (fs.existsSync(jsonPath)) {
+async function getJSONData (fileName: string) {
+	const filePath = isDev ? path.join(process.cwd(), fileName) : path.join(process.cwd(), "resources", "app", fileName);
+	if (fs.existsSync(filePath)) {
 		try {
-			const settingsObj = JSON.parse(fs.readFileSync(jsonPath).toString());
+			const settingsObj = JSON.parse(fs.readFileSync(filePath).toString());
 			if (settingsObj) {
 				return JSON.stringify(settingsObj);
 			}
@@ -33,8 +37,13 @@ async function getJSONData (jsonPath: string) {
 	return "";
 }
 
-function saveJSONData (jsonPath: string, settings: string) {
-	fs.writeFileSync(path.join(__dirname, "..", jsonPath), settings);
+function saveCSVData (fileName: string, csvBuffer: ArrayBuffer) {
+	const filePath = path.join(__dirname, "..", fileName);
+	fs.writeFileSync(filePath, Buffer.from(csvBuffer));
+}
+
+function saveJSONData (fileName: string, settings: string) {
+	fs.writeFileSync(path.join(__dirname, "..", fileName), settings);
 }
 
 function createWindow() {
@@ -65,9 +74,10 @@ app.whenReady().then(() => {
 	ipcMain.handle('getJSONData', async (_event: IpcMainInvokeEvent, jsonPath: string) => {
 		return await getJSONData(jsonPath);
 	});
-	ipcMain.handle('generateResponses', async (event: IpcMainInvokeEvent, settingsPath: string, settings: string, csvData: string) => {
+	ipcMain.handle('generateResponses', async (event: IpcMainInvokeEvent, settingsPath: string, settings: string, csvFileName: string, csvBuffer: ArrayBuffer, csvData: string) => {
 		try {
 			saveJSONData(settingsPath, settings);
+			saveCSVData(csvFileName, csvBuffer);
 			const responses = await generateResponses(settings, csvData, event.sender);
 			return JSON.stringify({status: "ok", responses : responses});
 		} catch (err) {

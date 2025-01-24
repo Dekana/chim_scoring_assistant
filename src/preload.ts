@@ -10,7 +10,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
 	getPrompts: () => ipcRenderer.invoke('getCSVData', PROMPTS_CSV_PATH, "'"),
 	getResponseSettings: () => ipcRenderer.invoke('getJSONData', RESPONSE_SETTINGS_JSON_PATH),
 	getScoreSettings: () => ipcRenderer.invoke('getJSONData', SCORE_SETTINGS_JSON_PATH),
-	generateResponses: (settings: string, csvData: string) => ipcRenderer.invoke('generateResponses', RESPONSE_SETTINGS_JSON_PATH, settings, csvData),
+	generateResponses: (settings: string, csvBuffer: Buffer, csvData: string) => ipcRenderer.invoke('generateResponses', RESPONSE_SETTINGS_JSON_PATH, settings, PROMPTS_CSV_PATH, csvBuffer, csvData),
 	generateScores: (settings: string, csvData: string) => ipcRenderer.invoke('generateScores', SCORE_SETTINGS_JSON_PATH, settings, csvData),
 	incrementGenerateResponses: (callback: (processed: number, skipped: number, total: number) => void) => ipcRenderer.on('incrementGenerateResponses', (_event, processed, skipped, total) => callback(processed, skipped, total)),
 	incrementGenerateScores: (callback: (processed: number, skipped: number, total: number) => void) => ipcRenderer.on('incrementGenerateScores', (_event, processed, skipped, total) => callback(processed, skipped, total))

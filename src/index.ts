@@ -1,5 +1,6 @@
 /// <reference types="papaparse" />
 
+let promptCsvBuffer: ArrayBuffer;
 let promptCsvData: object[];
 let responses: object[];
 
@@ -98,10 +99,11 @@ function onPromptFileChange(event: Event) {
 				header: true,
 				quoteChar: "'",
 				skipEmptyLines: true,
-				complete: function(results) {
+				complete: async function(results) {
 					const rows = results.data.length;
 					if (rows) {
 						promptCsvData = results.data as object[];
+						promptCsvBuffer = await file.arrayBuffer();
 						promptLoadResult.innerHTML = `
 						<div class="alert alert-success show">
 							Loaded ${rows} prompts.
@@ -204,7 +206,7 @@ async function onGenerateResponsesClick() {
 	toggleScoreButton(false);
 	toggleSpinners(true);
 	try {
-		const responseStr = await window.electronAPI.generateResponses(JSON.stringify(responseSettings, null, 2), JSON.stringify(promptCsvData));
+		const responseStr = await window.electronAPI.generateResponses(JSON.stringify(responseSettings, null, 2), promptCsvBuffer, JSON.stringify(promptCsvData));
 		const response: APIResponse = JSON.parse(responseStr);
 		if (response.errorMessage) {
 			throw new Error(response.errorMessage);
