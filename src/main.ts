@@ -38,8 +38,10 @@ async function getJSONData (fileName: string) {
 }
 
 function saveCSVData (fileName: string, csvBuffer: ArrayBuffer) {
-	const filePath = path.join(__dirname, "..", fileName);
-	fs.writeFileSync(filePath, Buffer.from(csvBuffer));
+	if (csvBuffer) {
+		const filePath = path.join(__dirname, "..", fileName);
+		fs.writeFileSync(filePath, Buffer.from(csvBuffer));
+	}
 }
 
 function saveJSONData (fileName: string, settings: string) {

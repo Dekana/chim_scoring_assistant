@@ -64,8 +64,10 @@ async function getJSONData(fileName) {
     return "";
 }
 function saveCSVData(fileName, csvBuffer) {
-    const filePath = path.join(__dirname, "..", fileName);
-    fs.writeFileSync(filePath, Buffer.from(csvBuffer));
+    if (csvBuffer) {
+        const filePath = path.join(__dirname, "..", fileName);
+        fs.writeFileSync(filePath, Buffer.from(csvBuffer));
+    }
 }
 function saveJSONData(fileName, settings) {
     fs.writeFileSync(path.join(__dirname, "..", fileName), settings);
