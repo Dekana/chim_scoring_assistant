@@ -49,3 +49,11 @@ The application makes some manual adjustments to the scores:
 * The application does not currently support actions from the CHIM plugin "Min AI". These actions will result in an action score of 1 as unrecognized.
 * Error handling could be improved. Currently, the results of a run are lost if an error occurs. Ideally, partial results would be logged to the "Results" tab or saved to a file.
 * An optional configurable wait time between requests to the LLM could be added to mitigate rate limits.
+
+## Building the project
+
+Requires Nodejs.
+1. Clone the repository.
+2. Open a command prompt in the cloned folder with admin rights and type `corepack enable` to enable Yarn.
+3. Type `yarn`, `yarn tsc`, and then `yarn start` to launch the app locally.
+4. Or type `yarn`, `yarn tsc` and then `yarn make` to build the exe and zip files used in releases.
