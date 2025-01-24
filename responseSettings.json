@@ -3,7 +3,7 @@
 	"model": "nemoremix-12b",
 	"temperature": 1.1,
 	"top_p": 0.97,
-	"min_o": 0.03,
+	"min_p": 0.03,
 	"repetition_penalty": 1.04,
 	"max_tokens": 256,
 	"response_format_type": "json_schema"
