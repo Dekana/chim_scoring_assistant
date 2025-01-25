@@ -231,7 +231,7 @@ function writeResponseFile(modelName: string) {
 	];
 	const headers = headersArr.join(",");
 
-	const modelDirPath = path.join(__dirname, "..", "models", sanitize(modelName));
+	const modelDirPath = path.join(process.cwd(), "models", sanitize(modelName));
 	if (!fs.existsSync(modelDirPath)) {
 		fs.mkdirSync(modelDirPath);
 	}

@@ -5,10 +5,8 @@ import * as path from "path";
 import generateResponses from "./generate";
 import generateScores from "./score";
 
-const isDev = !app.isPackaged;
-
 async function getCSVData (fileName: string, quoteChar: string) {
-	const filePath = isDev ? path.join(process.cwd(), fileName) : path.join(process.cwd(), "resources", "app", fileName);
+	const filePath = path.join(process.cwd(), fileName);
 	if (fs.existsSync(filePath)) {
 		try {
 			const csvObj = Papa.parse(fs.readFileSync(filePath).toString(), {header: true, quoteChar: quoteChar, skipEmptyLines: true});
@@ -23,7 +21,7 @@ async function getCSVData (fileName: string, quoteChar: string) {
 }
 
 async function getJSONData (fileName: string) {
-	const filePath = isDev ? path.join(process.cwd(), fileName) : path.join(process.cwd(), "resources", "app", fileName);
+	const filePath = path.join(process.cwd(), fileName);
 	if (fs.existsSync(filePath)) {
 		try {
 			const settingsObj = JSON.parse(fs.readFileSync(filePath).toString());
@@ -39,13 +37,13 @@ async function getJSONData (fileName: string) {
 
 function saveCSVData (fileName: string, csvBuffer: ArrayBuffer) {
 	if (csvBuffer) {
-		const filePath = path.join(__dirname, "..", fileName);
+		const filePath = path.join(process.cwd(), fileName);
 		fs.writeFileSync(filePath, Buffer.from(csvBuffer));
 	}
 }
 
 function saveJSONData (fileName: string, settings: string) {
-	fs.writeFileSync(path.join(__dirname, "..", fileName), settings);
+	fs.writeFileSync(path.join(process.cwd(), fileName), settings);
 }
 
 function createWindow() {
@@ -59,7 +57,7 @@ function createWindow() {
   });
 
   // and load the index.html of the app.
-  mainWindow.loadFile(path.join(__dirname, "..", "index.html"));
+  mainWindow.loadFile(path.join(__dirname, '..', "index.html"));
   //mainWindow.removeMenu();
 
   // Open the DevTools.

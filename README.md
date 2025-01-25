@@ -55,5 +55,5 @@ The application makes some manual adjustments to the scores:
 Requires Nodejs.
 1. Clone the repository.
 2. Open a command prompt in the cloned folder with admin rights and type `corepack enable` to enable Yarn.
-3. Type `yarn`, `yarn tsc`, and then `yarn start` to launch the app locally.
-4. Or type `yarn`, `yarn tsc` and then `yarn make` to build the exe and zip files used in releases.
+3. Type `yarn` and then `yarn start` to launch the app locally.
+4. Or type `yarn` and then `yarn make` to build the exe and zip files used in releases.

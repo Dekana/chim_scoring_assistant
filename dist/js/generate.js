@@ -237,7 +237,7 @@ function writeResponseFile(modelName) {
         "response_time"
     ];
     const headers = headersArr.join(",");
-    const modelDirPath = path.join(__dirname, "..", "models", (0, sanitize_filename_ts_1.sanitize)(modelName));
+    const modelDirPath = path.join(process.cwd(), "models", (0, sanitize_filename_ts_1.sanitize)(modelName));
     if (!fs.existsSync(modelDirPath)) {
         fs.mkdirSync(modelDirPath);
     }

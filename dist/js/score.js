@@ -28,7 +28,7 @@ const path = __importStar(require("path"));
 const PapaParse = __importStar(require("papaparse"));
 const sanitize_filename_ts_1 = require("sanitize-filename-ts");
 const utils = __importStar(require("./utils"));
-const scoringPromptPath = path.join(__dirname, '..', 'scorePrompt.txt');
+const scoringPromptPath = path.join(process.cwd(), 'scorePrompt.txt');
 let scoreFilePath;
 // prevent meta properties from entering the POST settings
 function cleanSettings(settings) {
@@ -294,7 +294,7 @@ async function generateScores(settings, csvData, sender) {
             aggregateScores.total_action_appropriateness_score / aggregateScores.scored_response_count,
             aggregateScores.total_target_selection_score / aggregateScores.scored_response_count,
         ].join(",");
-        fs.appendFileSync(path.join(__dirname, '..', 'aggregateScores.csv'), csvString + '\r\n');
+        fs.appendFileSync(path.join(process.cwd(), 'aggregateScores.csv'), csvString + '\r\n');
     }
     return results;
 }
@@ -305,7 +305,7 @@ function getScoringPromptTemplate() {
     return fs.readFileSync(scoringPromptPath).toString();
 }
 function writeAggregateScoreFile() {
-    if (!fs.existsSync(path.join(__dirname, '..', 'aggregateScores.csv'))) {
+    if (!fs.existsSync(path.join(process.cwd(), 'aggregateScores.csv'))) {
         const headersArr = [
             "timestamp",
             "model",
@@ -326,7 +326,7 @@ function writeAggregateScoreFile() {
             "average_target_selection"
         ];
         const headers = headersArr.join(",");
-        fs.writeFileSync(path.join(__dirname, '..', 'aggregateScores.csv'), headers + '\r\n');
+        fs.writeFileSync(path.join(process.cwd(), 'aggregateScores.csv'), headers + '\r\n');
     }
 }
 function writeScoreFile(modelName) {
@@ -343,15 +343,15 @@ function writeScoreFile(modelName) {
         "prompt",
         "response",
         "response_time",
+        "explanation",
         "responsiveness",
         "roleplaying",
         "quality",
         "action_appropriateness",
-        "target_selection",
-        "explanation"
+        "target_selection"
     ];
     const headers = headersArr.join(',');
-    const modelDirPath = path.join(__dirname, "..", "models", (0, sanitize_filename_ts_1.sanitize)(modelName));
+    const modelDirPath = path.join(process.cwd(), "models", (0, sanitize_filename_ts_1.sanitize)(modelName));
     if (!fs.existsSync(modelDirPath)) {
         fs.mkdirSync(modelDirPath);
     }

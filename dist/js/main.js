@@ -32,9 +32,8 @@ const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
 const generate_1 = __importDefault(require("./generate"));
 const score_1 = __importDefault(require("./score"));
-const isDev = !electron_1.app.isPackaged;
 async function getCSVData(fileName, quoteChar) {
-    const filePath = isDev ? path.join(process.cwd(), fileName) : path.join(process.cwd(), "resources", "app", fileName);
+    const filePath = path.join(process.cwd(), fileName);
     if (fs.existsSync(filePath)) {
         try {
             const csvObj = Papa.parse(fs.readFileSync(filePath).toString(), { header: true, quoteChar: quoteChar, skipEmptyLines: true });
@@ -49,7 +48,7 @@ async function getCSVData(fileName, quoteChar) {
     return "";
 }
 async function getJSONData(fileName) {
-    const filePath = isDev ? path.join(process.cwd(), fileName) : path.join(process.cwd(), "resources", "app", fileName);
+    const filePath = path.join(process.cwd(), fileName);
     if (fs.existsSync(filePath)) {
         try {
             const settingsObj = JSON.parse(fs.readFileSync(filePath).toString());
@@ -65,12 +64,12 @@ async function getJSONData(fileName) {
 }
 function saveCSVData(fileName, csvBuffer) {
     if (csvBuffer) {
-        const filePath = path.join(__dirname, "..", fileName);
+        const filePath = path.join(process.cwd(), fileName);
         fs.writeFileSync(filePath, Buffer.from(csvBuffer));
     }
 }
 function saveJSONData(fileName, settings) {
-    fs.writeFileSync(path.join(__dirname, "..", fileName), settings);
+    fs.writeFileSync(path.join(process.cwd(), fileName), settings);
 }
 function createWindow() {
     // Create the browser window.
@@ -82,7 +81,7 @@ function createWindow() {
         width: 1280,
     });
     // and load the index.html of the app.
-    mainWindow.loadFile(path.join(__dirname, "..", "index.html"));
+    mainWindow.loadFile(path.join(__dirname, '..', "index.html"));
     //mainWindow.removeMenu();
     // Open the DevTools.
     // mainWindow.webContents.openDevTools();

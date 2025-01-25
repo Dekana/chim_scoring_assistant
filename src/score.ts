@@ -5,7 +5,7 @@ import { sanitize } from 'sanitize-filename-ts';
 import * as utils from './utils';
 import { type WebContents } from 'electron';
 
-const scoringPromptPath = path.join(__dirname, '..', 'scorePrompt.txt');
+const scoringPromptPath = path.join(process.cwd(), 'scorePrompt.txt');
 let scoreFilePath: string;
 
 interface ModelDetails {
@@ -315,7 +315,7 @@ async function generateScores(settings: utils.Settings, csvData: string, sender:
 			aggregateScores.total_action_appropriateness_score / aggregateScores.scored_response_count,
 			aggregateScores.total_target_selection_score / aggregateScores.scored_response_count,
 		].join(",");
-		fs.appendFileSync(path.join(__dirname, '..', 'aggregateScores.csv'), csvString + '\r\n');
+		fs.appendFileSync(path.join(process.cwd(), 'aggregateScores.csv'), csvString + '\r\n');
 	}
 
 	return results;
@@ -330,7 +330,7 @@ function getScoringPromptTemplate() {
 }
 
 function writeAggregateScoreFile() {
-	if (!fs.existsSync(path.join(__dirname, '..', 'aggregateScores.csv'))) {
+	if (!fs.existsSync(path.join(process.cwd(), 'aggregateScores.csv'))) {
 		const headersArr = [
 			"timestamp",
 			"model",
@@ -351,7 +351,7 @@ function writeAggregateScoreFile() {
 			"average_target_selection"
 		];
 		const headers = headersArr.join(",");
-		fs.writeFileSync(path.join(__dirname, '..', 'aggregateScores.csv'), headers + '\r\n');
+		fs.writeFileSync(path.join(process.cwd(), 'aggregateScores.csv'), headers + '\r\n');
 	}
 }
 
@@ -369,16 +369,16 @@ function writeScoreFile(modelName: string) {
 		"prompt",
 		"response",
 		"response_time",
+		"explanation",
 		"responsiveness",
 		"roleplaying",
 		"quality",
 		"action_appropriateness",
-		"target_selection",
-		"explanation"
+		"target_selection"
 	];
 	const headers = headersArr.join(',');
 
-	const modelDirPath = path.join(__dirname, "..", "models", sanitize(modelName));
+	const modelDirPath = path.join(process.cwd(), "models", sanitize(modelName));
 	if (!fs.existsSync(modelDirPath)) {
 		fs.mkdirSync(modelDirPath);
 	}
