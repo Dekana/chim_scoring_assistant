@@ -281,7 +281,28 @@ async function generateScores(settings: utils.Settings, csvData: string, sender:
 			aggregateScores.total_action_appropriateness_score += parseFloat(scores.action_appropriateness) || 0;
 			aggregateScores.total_target_selection_score += parseFloat(scores.target_selection || "") || 0;
 		
-			const result = [{...modelDetails, ...scores}];
+			
+
+			const result = [{
+				model: modelDetails.model,
+				provider: modelDetails.provider,
+				url: modelDetails.url,
+				temperature: modelDetails.temperature,
+				top_p: modelDetails.top_p,
+				min_p: modelDetails.min_p,
+				repetition_penalty: modelDetails.repetition_penalty,
+				max_tokens: modelDetails.max_tokens,
+				response_format: modelDetails.response_format,
+				prompt: response["prompt"],
+				response: response["response"],
+				response_time: response["response_time"],
+				explanation: scores.explanation,
+				responsiveness: scores.responsiveness,
+				roleplaying: scores.roleplaying,
+				quality: scores.quality,
+				action_appropriateness: scores.action_appropriateness,
+				target_selection: scores.target_selection
+			}];
 			const csvString = PapaParse.unparse(result, {header: false});
 			
 			fs.appendFileSync(scoreFilePath, csvString + '\r\n');
